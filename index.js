@@ -541,7 +541,7 @@ const cooldownFile = './database/cooldown.json'
 const dbPath = "./database/ControlCommand.json";
 
 function getHash(data) {
-  return crypto.createHash("md5").update(data).digest("hex");
+    return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
 }
 
 function loadDB() {
