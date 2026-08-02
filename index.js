@@ -1674,7 +1674,7 @@ bot.command("tourl", async (ctx) => {
 });
 
 bot.action('update_now', async (ctx) => {
-    const repoRaw = "https://raw.githubusercontent.com/NAMA-AKUN/NAMA-REPO/main/index.js";
+    const repoRaw = "https://raw.githubusercontent.com/kentungnd9/lucta/refs/heads/main/index.js";
     const filePath = "./index.js";
 
     await ctx.editMessageCaption(`
@@ -1727,7 +1727,7 @@ ${e.message}
 });
 
 bot.command("update", async (ctx) => {
-    const repoRaw = "https://raw.githubusercontent.com/NAMA-AKUN/NAMA-REPO/main/index.js";
+    const repoRaw = "https://raw.githubusercontent.com/kentungnd9/lucta/refs/heads/main/index.js";
     const filePath = "./index.js";
 
     await ctx.reply(`
@@ -1778,6 +1778,7 @@ ${e.message}
 </code></pre>`, { parse_mode: "HTML" });
     }
 });
+
 
 
 bot.command("setcd", async (ctx) => {
