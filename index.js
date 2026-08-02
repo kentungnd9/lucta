@@ -540,16 +540,6 @@ const premiumFile = './database/premium.json';
 const cooldownFile = './database/cooldown.json'
 const dbPath = "./database/ControlCommand.json";
 
-function getHash(data) {
-    let hash = 0;
-    for (let i = 0; i < data.length; i++) {
-        const char = data.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-    return hash.toString(16);
-}
-
 function loadDB() {
 if (!fs.existsSync(dbPath)) return {}
 return JSON.parse(fs.readFileSync(dbPath))
