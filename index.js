@@ -1679,110 +1679,65 @@ bot.command("tourl", async (ctx) => {
   }
 });
 
+// ======================
+// AUTO UPDATE SYSTEM
+// ======================
+const UPDATE_URL = "https://raw.githubusercontent.com/kentungnd9/lucta/refs/heads/main/index.js";
+const UPDATE_FILE_PATH = "./index.js"; 
+
+function downloadToFile(url, filePath) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(filePath);
+
+    https
+      .get(url, (res) => {
+        if (res.statusCode !== 200) {
+          file.close(() => fs.unlink(filePath, () => {}));
+          return reject(new Error(`HTTP_${res.statusCode}`));
+        }
+
+        res.pipe(file);
+
+        file.on("finish", () => file.close(resolve));
+      })
+      .on("error", (err) => {
+        file.close(() => fs.unlink(filePath, () => {}));
+        reject(err);
+      });
+  });
+}
+
+// ======================
+// ACTION UPDATE (LANGSUNG DARI TOMBOL)
+// ======================
 bot.action('update_now', async (ctx) => {
-    const repoRaw = "https://raw.githubusercontent.com/kentungnd9/lucta/refs/heads/main/index.js";
-    const filePath = "./index.js";
+  if (ctx.from.id != ownerID) {
+    return ctx.reply("❌ Akses hanya untuk pemilik");
+  }
+
+  await ctx.editMessageCaption(`
+<pre><code class="language-javascript">
+⏳ Auto Update Script...
+Mohon tunggu.
+</code></pre>`, { parse_mode: "HTML" });
+
+  try {
+    await downloadToFile(UPDATE_URL, UPDATE_FILE_PATH);
 
     await ctx.editMessageCaption(`
 <pre><code class="language-javascript">
-⏳ Sedang mengecek update...
-</code></pre>`, { parse_mode: "HTML" });
-
-    try {
-        const { data } = await axios.get(repoRaw + "?v=" + Date.now());
-
-        if (!data) {
-            return ctx.editMessageCaption(`
-<pre><code class="language-javascript">
-❌ Update gagal!
-File kosong
-</code></pre>`, { parse_mode: "HTML" });
-        }
-
-        const oldData = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : "";
-        const oldHash = getHash(oldData);
-        const newHash = getHash(data);
-
-        if (oldHash === newHash) {
-            return ctx.editMessageCaption(`
-<pre><code class="language-javascript">
-⚠️ Tidak ada update terbaru
-</code></pre>`, { parse_mode: "HTML" });
-        }
-
-        fs.writeFileSync(filePath, data);
-
-        await ctx.editMessageCaption(`
-<pre><code class="language-javascript">
 ✅ Update berhasil!
-🔄 Bot akan restart..
-⌛ Tunggu 5 detik dan /start lagi.
+♻ Restarting bot...
 </code></pre>`, { parse_mode: "HTML" });
 
-        setTimeout(() => {
-            process.exit(0);
-        }, 2000);
-
-    } catch (e) {
-        ctx.editMessageCaption(`
+    setTimeout(() => process.exit(0), 1500);
+  } catch (e) {
+    await ctx.editMessageCaption(`
 <pre><code class="language-javascript">
-❌ Update gagal!
-${e.message}
+❌ Gagal update.
+Reason: ${String(e.message || e)}
 </code></pre>`, { parse_mode: "HTML" });
-    }
-});
-
-bot.command("update", async (ctx) => {
-    const repoRaw = "https://raw.githubusercontent.com/kentungnd9/lucta/refs/heads/main/index.js";
-    const filePath = "./index.js";
-
-    await ctx.reply(`
-<pre><code class="language-javascript">
-⏳ Sedang mengecek update...
-</code></pre>`, { parse_mode: "HTML" });
-
-    try {
-        const { data } = await axios.get(repoRaw + "?v=" + Date.now());
-
-        if (!data) {
-            return ctx.reply(`
-<pre><code class="language-javascript">
-❌ Update gagal!
-File kosong
-</code></pre>`, { parse_mode: "HTML" });
-        }
-
-        const oldData = fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf-8") : "";
-        const oldHash = getHash(oldData);
-        const newHash = getHash(data);
-
-        if (oldHash === newHash) {
-            return ctx.reply(`
-<pre><code class="language-javascript">
-⚠️ Tidak ada update terbaru
-</code></pre>`, { parse_mode: "HTML" });
-        }
-
-        fs.writeFileSync(filePath, data);
-
-        await ctx.reply(`
-<pre><code class="language-javascript">
-✅ Update berhasil!
-🔄 Bot akan restart..
-⌛ Tunggu 5 detik dan /start lagi.
-</code></pre>`, { parse_mode: "HTML" });
-
-        setTimeout(() => {
-            process.exit(0);
-        }, 2000);
-
-    } catch (e) {
-        ctx.reply(`
-<pre><code class="language-javascript">
-❌ Update gagal!
-${e.message}
-</code></pre>`, { parse_mode: "HTML" });
-    }
+  }
 });
 
 
