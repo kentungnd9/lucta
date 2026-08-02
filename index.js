@@ -2428,7 +2428,6 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
                     icon_custom_emoji_id: getRandomIconId()
                 }
             ]
-        ]
     };
 
     await ctx.replyWithVideo(thumbnailVideo, {
