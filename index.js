@@ -339,6 +339,7 @@ const makeInMemoryStore = ({ logger = console } = {}) => {
 // ========== CONSTANTS ==========
 const thumbnailUrl = "https://e.top4top.io/p_3865pibj11.jpg";
 const thumbnailUrl2 = "https://f.top4top.io/p_3865uwg0l1.png";
+const thumbnailVideo = "https://f.top4top.io/m_3866m645s1.mp4";
 
 // ========== CREATE SAFE SOCK ==========
 function createSafeSock(sock) {
@@ -413,7 +414,7 @@ function showBanner() {
 
 » Information:
   Developer: @Luctadvorisme 
-  Version: 28.0.0
+  Version: 29.0.0
   Status: Bot Connected
   `));
 }
@@ -2154,6 +2155,9 @@ bot.command('delgcpremium', async (ctx) => {
 
 const userWarna = new Map();
 
+// ======================
+// WARNA & ICON
+// ======================
 function getStyle(warna) {
     if (warna === 'merah') return 'danger';
     if (warna === 'biru') return 'primary';
@@ -2211,6 +2215,9 @@ function createUrlButton(text, url, funcKey, warna) {
     return btn;
 }
 
+// ======================
+// MENU FUNCTIONS
+// ======================
 function getMenuHome(warna) {
     return [
         [
@@ -2285,8 +2292,7 @@ function getMenuInformation(warna) {
             createButton("𝗡𝗘𝗫𝗧", "menu_home", 'nav', warna)
         ],
         [
-            createButton("𝗠𝗘𝗡𝗨 𝗣𝗥𝗜𝗖𝗘", "menu_price", 'nav', warna),
-            createButton("𝗔𝗨𝗧𝗢 𝗨𝗣𝗗𝗔𝗧𝗘", "update_now", 'nav', warna)
+            createButton("𝗠𝗘𝗡𝗨 𝗣𝗥𝗜𝗖𝗘", "menu_price", 'nav', warna)
         ]
     ];
 }
@@ -2307,7 +2313,7 @@ function getMenuPrice(warna) {
 function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus, page) {
     return `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 [ STATUS ]
   Premium: ${premiumStatus}
@@ -2320,6 +2326,28 @@ function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus
 </code></pre>`;
 }
 
+function getOpeningMenuCaption(username, userId, senderStatus, runtime) {
+    return `
+<pre><code class="language-javascript">
+[ MOROSEWAVE ]
+──────────────────
+Bukan sekadar gelombang,
+tapi gema dari keheningan yang berbicara.
+Di antara kode dan sunyi,
+kita menari di tepi realitas.
+
+──────────────────
+ Auto-Update : Enabled
+ System      : Online & Active
+──────────────────
+"Terkadang, kehampaan adalah ruang
+di mana kita menemukan jawaban."
+</code></pre>`;
+}
+
+// ======================
+// START MENU (PILIH WARNA)
+// ======================
 bot.start(async (ctx) => {
     const loadingMessage = await ctx.reply("🤖 <b>MoroseWave Initializing...</b>", { parse_mode: "HTML" });
     const loadingFrames = [
@@ -2359,6 +2387,9 @@ bot.start(async (ctx) => {
     });
 });
 
+// ======================
+// CALLBACK PILIH WARNA → TAMPILKAN MENU PEMBUKA (VIDEO)
+// ======================
 bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (ctx) => {
     let warna = 'hijau';
     if (ctx.match[0] === 'warna_merah') warna = 'merah';
@@ -2371,6 +2402,49 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
     await ctx.deleteMessage();
 
     const userId = ctx.from.id;
+    const username = ctx.from.username ? `@${ctx.from.username}` : ctx.from.first_name || "User";
+    const senderStatus = isWhatsAppConnected ? "✅ CONNECTED" : "❌ DISCONNECTED";
+    const runtime = formatRuntime();
+    const style = (warna === 'disko') ? getDiskoStyle() : getStyle(warna);
+
+    const openingCaption = getOpeningMenuCaption(username, userId, senderStatus, runtime);
+
+    const keyboard = {
+        inline_keyboard: [
+            [
+                {
+                    text: "𝗦𝗛𝗢𝗪 𝗦𝗖𝗥𝗜𝗣𝗧",
+                    callback_data: "open_script",
+                    style: style,
+                    icon_custom_emoji_id: getRandomIconId()
+                }
+            ]
+        ]
+    }
+            [
+                {
+                    text: "𝗔𝗨𝗧𝗢 𝗨𝗣𝗗𝗔𝗧𝗘",
+                    callback_data: "update_now",
+                    style: style,
+                    icon_custom_emoji_id: getRandomIconId()
+                }
+            ]
+        ]
+    };
+
+    await ctx.replyWithVideo(thumbnailVideo, {
+        caption: openingCaption,
+        parse_mode: "HTML",
+        reply_markup: keyboard
+    });
+});
+
+// ======================
+// OPEN SCRIPT → MENU HOME (edit ke foto)
+// ======================
+bot.action('open_script', async (ctx) => {
+    const userId = ctx.from.id;
+    const warna = userWarna.get(userId) || 'hijau';
     const premiumStatus = isPremiumUser(userId) ? "Yes" : "No";
     const senderStatus = isWhatsAppConnected ? "Yes" : "No";
     const runtimeStatus = formatRuntime();
@@ -2378,17 +2452,24 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
     const menuMessage = getMenuCaption(premiumStatus, ctx.from.first_name, userId, senderStatus, runtimeStatus, 1);
     const keyboard = getMenuHome(warna);
 
-    const options = {
-        caption: menuMessage,
-        parse_mode: "HTML",
-        reply_markup: { inline_keyboard: keyboard }
-    };
-    if (ctx.chat.type === 'private') {
-        options.message_effect_id = "5104841245755180586";
+    try {
+        await ctx.editMessageMedia(
+            { type: 'photo', media: thumbnailUrl, caption: menuMessage, parse_mode: "HTML" },
+            { reply_markup: { inline_keyboard: keyboard } }
+        );
+        await ctx.answerCbQuery();
+    } catch (error) {
+        if (error.response?.error_code === 400) {
+            await ctx.answerCbQuery();
+        } else {
+            console.error("Error:", error);
+        }
     }
-    await ctx.replyWithPhoto(thumbnailUrl, options);
 });
 
+// ======================
+// MENU HOME (PAGE 1/6)
+// ======================
 bot.action('menu_home', async (ctx) => {
     const userId = ctx.from.id;
     const warna = userWarna.get(userId) || 'hijau';
@@ -2412,7 +2493,7 @@ bot.action('menu_controls', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const controlsMenu = `
 <pre><code class="language-javascript">
-[ CONTROLS | v28.0 ]
+[ CONTROLS | V29.0 ]
 
 [ SYSTEM ]
   /addbot - Add Sender
@@ -2460,7 +2541,7 @@ bot.action('menu_toolss', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const toolssMenu = `
 <pre><code class="language-javascript">
-[ TOOLS | v28.0 ]
+[ TOOLS | V29.0 ]
 
 [ DEVICE & GEN ]
   /iqc - iPhone Gen
@@ -2510,7 +2591,7 @@ bot.action('menu_bug', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu = `
 <pre><code class="language-javascript">
-[ BUG | v28.0 ]
+[ BUG | V29.0 ]
 
 [ CAN SPAM ]
   /Xspamv1 - Delay Invisible
@@ -2536,7 +2617,7 @@ bot.action('menu_bug2', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu2 = `
 <pre><code class="language-javascript">
-[ TRASH | v28.0 ]
+[ TRASH | V29.0 ]
  
 [ NUMBER BUG ]
   /Xcrash - Crash Hard
@@ -2582,7 +2663,7 @@ bot.action('menu_tqto', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const tqtoMenu = `
 <pre><code class="language-javascript">
-[ CREDIT | v28.0 ]
+[ CREDIT | V29.0 ]
 
   @Luctadvorisme (Dev)
   All Buyers & Users
@@ -2619,7 +2700,7 @@ bot.action('menu_information', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const informationMenu = `
 <pre><code class="language-javascript">
-[ INFORMATION | v28.0 ]
+[ INFORMATION | V29.0 ]
 
   WhatsApp Bug Concept
 
@@ -2648,7 +2729,7 @@ bot.action('menu_price', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const priceMenu = `
 <pre><code class="language-javascript">
-[ PRICE SCRIPT | v28.0 ]
+[ PRICE SCRIPT | V29.0 ]
 
   𝐌𝐎𝐑𝐎𝐒𝐄𝐖𝐀𝐕𝐄
 
@@ -2681,7 +2762,7 @@ bot.command("Xcrash", checkWhatsAppConnection, checkCooldown, checkCommandEnable
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2703,7 +2784,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2729,7 +2810,7 @@ bot.command("Xstuck", checkWhatsAppConnection, checkCooldown, checkCommandEnable
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2751,7 +2832,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2777,7 +2858,7 @@ bot.command("Xclick", checkWhatsAppConnection, checkCooldown, checkCommandEnable
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2799,7 +2880,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2825,7 +2906,7 @@ bot.command("Xbeku", checkWhatsAppConnection, checkCooldown, checkCommandEnabled
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2847,7 +2928,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2873,7 +2954,7 @@ bot.command("Xcrashinvis", checkWhatsAppConnection, checkCooldown, checkCommandE
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2895,7 +2976,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2921,7 +3002,7 @@ bot.command("Xinvisbeku", checkWhatsAppConnection, checkCooldown, checkCommandEn
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2943,7 +3024,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -2969,7 +3050,7 @@ bot.command("Xinvis", checkWhatsAppConnection, checkCooldown, checkCommandEnable
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -2991,7 +3072,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3017,7 +3098,7 @@ bot.command("Xscreen", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3039,7 +3120,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3065,7 +3146,7 @@ bot.command("Xengine", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3087,7 +3168,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3113,7 +3194,7 @@ bot.command("Xbuldo", checkWhatsAppConnection, checkCooldown, checkCommandEnable
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3135,7 +3216,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3162,7 +3243,7 @@ bot.command("Xspamv1", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3184,7 +3265,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3210,7 +3291,7 @@ bot.command("Xspamv2", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3232,7 +3313,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3258,7 +3339,7 @@ bot.command("Xspamv3", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3280,7 +3361,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3306,7 +3387,7 @@ bot.command("Xspamv4", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3328,7 +3409,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3354,7 +3435,7 @@ bot.command("Xspamv5", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3376,7 +3457,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
@@ -3402,7 +3483,7 @@ bot.command("Xspamv6", checkWhatsAppConnection, checkCooldown, checkCommandEnabl
   const processMessage = await ctx.telegram.sendPhoto(ctx.chat.id, thumbnailUrl2, {
     caption: `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Process
@@ -3424,7 +3505,7 @@ Status: Process
 
   await ctx.telegram.editMessageCaption(ctx.chat.id, processMessageId, undefined, `
 <pre><code class="language-javascript">
-[ MOROSEWAVE | v28.0 ]
+[ MOROSEWAVE | V29.0 ]
 
 Target: ${q}
 Status: Success
