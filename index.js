@@ -275,7 +275,7 @@ const {
   BufferJSON,
   DisconnectReason,
   proto,
-} = require("@whiskeysockets/baileys": "github:YakuzaXsilence/bails");
+} = require("@bellaxchuu/yarnbails");
 const pino = require('pino');
 const chalk = require('chalk');
 const moment = require('moment-timezone');
