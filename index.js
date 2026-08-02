@@ -720,12 +720,11 @@ const store = makeInMemoryStore({
 
 startSesi();
 
-const checkWhatsAppConnection = (ctx, next) => {
+const checkWhatsAppConnection = (ctx) => {
     if (!isWhatsAppConnected) {
         ctx.reply("🪧 ☇ Tidak ada sender yang terhubung");
         return;
     }
-    next();
 };
 
 const checkCooldown = (ctx, next) => {
@@ -2312,7 +2311,7 @@ function getMenuPrice(warna) {
 
 function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus, page) {
     return `
-<pre><code class="language-javascript">
+<blockquote>
 [ MOROSEWAVE | V29.0 ]
 
 [ STATUS ]
@@ -2323,12 +2322,12 @@ function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus
   Guard: Active
 
 [ PAGE ${page}/6 ]
-</code></pre>`;
+</blockquote>`;
 }
 
 function getOpeningMenuCaption(username, userId, senderStatus, runtime) {
     return `
-<pre><code class="language-javascript">
+<blockquote>
 [ MOROSEWAVE ]
 ──────────────────
 Bukan sekadar gelombang,
@@ -2342,7 +2341,7 @@ kita menari di tepi realitas.
 ──────────────────
 "Terkadang, kehampaan adalah ruang
 di mana kita menemukan jawaban."
-</code></pre>`;
+</blockquote>`;
 }
 
 // ======================
@@ -2430,7 +2429,6 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
         ]
     };
 
-
     await ctx.replyWithVideo(thumbnailVideo, {
         caption: openingCaption,
         parse_mode: "HTML",
@@ -2491,7 +2489,7 @@ bot.action('menu_home', async (ctx) => {
 bot.action('menu_controls', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const controlsMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ CONTROLS | V29.0 ]
 
 [ SYSTEM ]
@@ -2509,7 +2507,7 @@ bot.action('menu_controls', async (ctx) => {
   /listblockcmd - List Blocked
 
 [ PAGE 2/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuControls(warna);
     try {
         await ctx.editMessageCaption(controlsMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2520,7 +2518,7 @@ bot.action('menu_controls', async (ctx) => {
 bot.action('menu_homecontrols', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<pre><code class="language-javascript">
+<blockquote>
 [ CONTROL PANEL ]
 
 Menu ini digunakan untuk mengontrol dan mengatur bot.
@@ -2528,7 +2526,7 @@ Anda dapat menambah sender, mengatur cooldown, reset session,
 serta mengelola user premium dan grup premium.
 
 [ PAGE 2/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuControls(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2539,7 +2537,7 @@ serta mengelola user premium dan grup premium.
 bot.action('menu_toolss', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const toolssMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ TOOLS | V29.0 ]
 
 [ DEVICE & GEN ]
@@ -2559,7 +2557,7 @@ bot.action('menu_toolss', async (ctx) => {
   /cekkhodam - Check Khodam
 
 [ PAGE 3/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuToolss(warna);
     try {
         await ctx.editMessageCaption(toolssMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2570,7 +2568,7 @@ bot.action('menu_toolss', async (ctx) => {
 bot.action('menu_hometoolss', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<pre><code class="language-javascript">
+<blockquote>
 [ TOOLS PANEL ]
 
 Menu ini berisi berbagai tools dan utilitas yang tersedia.
@@ -2578,7 +2576,7 @@ Anda dapat generate device, mencari tiktok, downloader media,
 membuat sticker brat, convert media ke url, dan lainnya.
 
 [ PAGE 3/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuToolss(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2589,7 +2587,7 @@ membuat sticker brat, convert media ke url, dan lainnya.
 bot.action('menu_bug', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ BUG | V29.0 ]
 
 [ CAN SPAM ]
@@ -2604,7 +2602,7 @@ Note:
  • Nomor Wajib Bisa Chat Agar Tidak Mudah Kena Limit
 
 [ PAGE 4/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(bugMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2615,7 +2613,7 @@ Note:
 bot.action('menu_bug2', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu2 = `
-<pre><code class="language-javascript">
+<blockquote>
 [ TRASH | V29.0 ]
  
 [ NUMBER BUG ]
@@ -2631,7 +2629,7 @@ bot.action('menu_bug2', async (ctx) => {
   /Xbuldo - Bulldozer
   
 [ PAGE 4/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(bugMenu2, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2642,7 +2640,7 @@ bot.action('menu_bug2', async (ctx) => {
 bot.action('menu_homebugs', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<pre><code class="language-javascript">
+<blockquote>
 [ BUG PANEL ]
 
 Menu ini berisi kumpulan bug yang tersedia.
@@ -2650,7 +2648,7 @@ Gunakan dengan bijak dan bertanggung jawab.
 Setiap command memiliki fungsi yang berbeda-beda.
 
 [ PAGE 4/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2661,7 +2659,7 @@ Setiap command memiliki fungsi yang berbeda-beda.
 bot.action('menu_tqto', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const tqtoMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ CREDIT | V29.0 ]
 
   @Luctadvorisme (Dev)
@@ -2670,7 +2668,7 @@ bot.action('menu_tqto', async (ctx) => {
   Everything is Nothing.
 
 [ PAGE 5/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuTqto(warna);
     try {
         await ctx.editMessageCaption(tqtoMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2681,13 +2679,13 @@ bot.action('menu_tqto', async (ctx) => {
 bot.action('menu_hometqto', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<pre><code class="language-javascript">
+<blockquote>
 [ CREDIT PANEL ]
 
 Terima kasih telah menggunakan MoroseWave Bot
 
 [ PAGE 5/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuTqto(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2698,7 +2696,7 @@ Terima kasih telah menggunakan MoroseWave Bot
 bot.action('menu_information', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const informationMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ INFORMATION | V29.0 ]
 
   WhatsApp Bug Concept
@@ -2716,7 +2714,7 @@ bot.action('menu_information', async (ctx) => {
   Developer tidak bertanggung jawab atas penyalahgunaan.
 
 [ PAGE 6/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuInformation(warna);
     try {
         await ctx.editMessageCaption(informationMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2727,7 +2725,7 @@ bot.action('menu_information', async (ctx) => {
 bot.action('menu_price', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const priceMenu = `
-<pre><code class="language-javascript">
+<blockquote>
 [ PRICE SCRIPT | V29.0 ]
 
   𝐌𝐎𝐑𝐎𝐒𝐄𝐖𝐀𝐕𝐄
@@ -2741,7 +2739,7 @@ bot.action('menu_price', async (ctx) => {
   ➣ OWN    : 60k
 
 [ PAGE 6/6 ]
-</code></pre>`;
+</blockquote>`;
     const keyboard = getMenuPrice(warna);
     try {
         await ctx.editMessageCaption(priceMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -3519,7 +3517,7 @@ Status: Success
 });
 
 //CASE BUG GROUP
-bot.command('overbannido', async (ctx) => {
+bot.command('overbannido', async (ctx) => { 
   const chatId = ctx.chat.id;
   const link = ctx.message.text.split(' ').slice(1).join(' ');
 
@@ -3542,7 +3540,7 @@ bot.command('overbannido', async (ctx) => {
   }
 
   const processMessage = await ctx.replyWithVideo(
-    thumbnailURL,
+    thumbnailUrl,
     {
       caption: `
 <blockquote><pre>Ban Group</pre></blockquote>
