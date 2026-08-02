@@ -2410,17 +2410,16 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
     const openingCaption = getOpeningMenuCaption(username, userId, senderStatus, runtime);
 
     const keyboard = {
-        inline_keyboard: [
-            [
-                {
-                    text: "𝗦𝗛𝗢𝗪 𝗦𝗖𝗥𝗜𝗣𝗧",
-                    callback_data: "open_script",
-                    style: style,
-                    icon_custom_emoji_id: getRandomIconId()
-                }
-            ]
+    inline_keyboard: [
+        [
+            {
+                text: "𝗦𝗛𝗢𝗪 𝗦𝗖𝗥𝗜𝗣𝗧",
+                callback_data: "open_script",
+                style: style,
+                icon_custom_emoji_id: getRandomIconId()
+            }
         ]
-    }
+    ]
             [
                 {
                     text: "𝗔𝗨𝗧𝗢 𝗨𝗣𝗗𝗔𝗧𝗘",
