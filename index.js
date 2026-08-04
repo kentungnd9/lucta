@@ -2311,7 +2311,7 @@ function getMenuPrice(warna) {
 
 function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus, page) {
     return `
-<blockquote>
+<pre><code class="language-javascript">
 [ MOROSEWAVE | V29.0 ]
 
 [ STATUS ]
@@ -2322,12 +2322,12 @@ function getMenuCaption(premiumStatus, name, userId, senderStatus, runtimeStatus
   Guard: Active
 
 [ PAGE ${page}/6 ]
-</blockquote>`;
+</code></pre>`;
 }
 
 function getOpeningMenuCaption(username, userId, senderStatus, runtime) {
     return `
-<blockquote>
+<pre><code class="language-javascript">
 [ MOROSEWAVE ]
 ──────────────────
 Bukan sekadar gelombang,
@@ -2341,7 +2341,7 @@ kita menari di tepi realitas.
 ──────────────────
 "Terkadang, kehampaan adalah ruang
 di mana kita menemukan jawaban."
-</blockquote>`;
+</code></pre>`;
 }
 
 // ======================
@@ -2432,7 +2432,8 @@ bot.action(['warna_merah', 'warna_hijau', 'warna_biru', 'warna_disko'], async (c
     await ctx.replyWithVideo(thumbnailVideo, {
         caption: openingCaption,
         parse_mode: "HTML",
-        reply_markup: keyboard
+        reply_markup: keyboard,
+        message_effect_id: "5104841245755180586"
     });
 });
 
@@ -2489,7 +2490,7 @@ bot.action('menu_home', async (ctx) => {
 bot.action('menu_controls', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const controlsMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ CONTROLS | V29.0 ]
 
 [ SYSTEM ]
@@ -2507,7 +2508,7 @@ bot.action('menu_controls', async (ctx) => {
   /listblockcmd - List Blocked
 
 [ PAGE 2/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuControls(warna);
     try {
         await ctx.editMessageCaption(controlsMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2518,7 +2519,7 @@ bot.action('menu_controls', async (ctx) => {
 bot.action('menu_homecontrols', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<blockquote>
+<pre><code class="language-javascript">
 [ CONTROL PANEL ]
 
 Menu ini digunakan untuk mengontrol dan mengatur bot.
@@ -2526,7 +2527,7 @@ Anda dapat menambah sender, mengatur cooldown, reset session,
 serta mengelola user premium dan grup premium.
 
 [ PAGE 2/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuControls(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2537,7 +2538,7 @@ serta mengelola user premium dan grup premium.
 bot.action('menu_toolss', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const toolssMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ TOOLS | V29.0 ]
 
 [ DEVICE & GEN ]
@@ -2557,7 +2558,7 @@ bot.action('menu_toolss', async (ctx) => {
   /cekkhodam - Check Khodam
 
 [ PAGE 3/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuToolss(warna);
     try {
         await ctx.editMessageCaption(toolssMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2568,7 +2569,7 @@ bot.action('menu_toolss', async (ctx) => {
 bot.action('menu_hometoolss', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<blockquote>
+<pre><code class="language-javascript">
 [ TOOLS PANEL ]
 
 Menu ini berisi berbagai tools dan utilitas yang tersedia.
@@ -2576,7 +2577,7 @@ Anda dapat generate device, mencari tiktok, downloader media,
 membuat sticker brat, convert media ke url, dan lainnya.
 
 [ PAGE 3/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuToolss(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2587,7 +2588,7 @@ membuat sticker brat, convert media ke url, dan lainnya.
 bot.action('menu_bug', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ BUG | V29.0 ]
 
 [ CAN SPAM ]
@@ -2602,7 +2603,7 @@ Note:
  • Nomor Wajib Bisa Chat Agar Tidak Mudah Kena Limit
 
 [ PAGE 4/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(bugMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2613,7 +2614,7 @@ Note:
 bot.action('menu_bug2', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const bugMenu2 = `
-<blockquote>
+<pre><code class="language-javascript">
 [ TRASH | V29.0 ]
  
 [ NUMBER BUG ]
@@ -2629,7 +2630,7 @@ bot.action('menu_bug2', async (ctx) => {
   /Xbuldo - Bulldozer
   
 [ PAGE 4/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(bugMenu2, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2640,7 +2641,7 @@ bot.action('menu_bug2', async (ctx) => {
 bot.action('menu_homebugs', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<blockquote>
+<pre><code class="language-javascript">
 [ BUG PANEL ]
 
 Menu ini berisi kumpulan bug yang tersedia.
@@ -2648,7 +2649,7 @@ Gunakan dengan bijak dan bertanggung jawab.
 Setiap command memiliki fungsi yang berbeda-beda.
 
 [ PAGE 4/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuBug(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2659,7 +2660,7 @@ Setiap command memiliki fungsi yang berbeda-beda.
 bot.action('menu_tqto', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const tqtoMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ CREDIT | V29.0 ]
 
   @Luctadvorisme (Dev)
@@ -2668,7 +2669,7 @@ bot.action('menu_tqto', async (ctx) => {
   Everything is Nothing.
 
 [ PAGE 5/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuTqto(warna);
     try {
         await ctx.editMessageCaption(tqtoMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2679,13 +2680,13 @@ bot.action('menu_tqto', async (ctx) => {
 bot.action('menu_hometqto', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const text = `
-<blockquote>
+<pre><code class="language-javascript">
 [ CREDIT PANEL ]
 
 Terima kasih telah menggunakan MoroseWave Bot
 
 [ PAGE 5/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuTqto(warna);
     try {
         await ctx.editMessageCaption(text, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2696,7 +2697,7 @@ Terima kasih telah menggunakan MoroseWave Bot
 bot.action('menu_information', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const informationMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ INFORMATION | V29.0 ]
 
   WhatsApp Bug Concept
@@ -2714,7 +2715,7 @@ bot.action('menu_information', async (ctx) => {
   Developer tidak bertanggung jawab atas penyalahgunaan.
 
 [ PAGE 6/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuInformation(warna);
     try {
         await ctx.editMessageCaption(informationMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
@@ -2725,7 +2726,7 @@ bot.action('menu_information', async (ctx) => {
 bot.action('menu_price', async (ctx) => {
     const warna = userWarna.get(ctx.from.id) || 'hijau';
     const priceMenu = `
-<blockquote>
+<pre><code class="language-javascript">
 [ PRICE SCRIPT | V29.0 ]
 
   𝐌𝐎𝐑𝐎𝐒𝐄𝐖𝐀𝐕𝐄
@@ -2739,7 +2740,7 @@ bot.action('menu_price', async (ctx) => {
   ➣ OWN    : 60k
 
 [ PAGE 6/6 ]
-</blockquote>`;
+</code></pre>`;
     const keyboard = getMenuPrice(warna);
     try {
         await ctx.editMessageCaption(priceMenu, { parse_mode: "HTML", reply_markup: { inline_keyboard: keyboard } });
